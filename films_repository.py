@@ -35,3 +35,24 @@ class FilmRepository:
 
         self.cursor.execute(query, params)
         return self.cursor.fetchall()
+
+    def _is_query_in_db(self, genre, actor, year):
+        self.cursor.execute('''SELECT query_id FROM log_query 
+        WHERE genre = %s AND actor = %s AND year = %s''', (genre, actor, year))
+        return self.cursor.fetchone()
+
+    def log_query(self, genre, actor, year):
+        if genre is None and actor is None and year is None:
+            return
+
+        query_id = self._is_query_in_db(genre, actor, year)
+        if query_id:
+            self.cursor.execute('''UPDATE log_query SET count = count + 1
+            WHERE query_id = %s''', (query_id[0],))
+        else:
+            self.cursor.execute('''INSERT INTO log_query (genre, actor, year, count) 
+            VALUES (%s, %s, %s, 1)''', (genre, actor, year,))
+
+    def get_top_queries(self, limit):
+        self.cursor.execute('SELECT genre, actor, year FROM log_query ORDER BY count DESC LIMIT %s', (limit,))
+        return self.cursor.fetchall()
