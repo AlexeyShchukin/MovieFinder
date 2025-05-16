@@ -3,8 +3,8 @@ from uvicorn import run
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
 
+from models import LogQueryRequest
 from unit_of_work import UnitOfWork
 
 app = FastAPI()
@@ -13,10 +13,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
-class LogQueryRequest(BaseModel):
-    genre: str | None = None
-    actor: str | None = None
-    year: int | None = None
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
