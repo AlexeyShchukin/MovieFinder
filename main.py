@@ -3,6 +3,7 @@ from uvicorn import run
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 
 from unit_of_work import UnitOfWork
 
@@ -12,13 +13,24 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
+class LogQueryRequest(BaseModel):
+    genre: str | None = None
+    actor: str | None = None
+    year: int | None = None
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.post("/movies")
+@app.post("/log_query")
+async def log_query(data: LogQueryRequest):
+    with UnitOfWork() as uow:
+        uow.films.log_query(data.genre, data.actor, data.year)
+        return {"status": "logged"}
+
+
+@app.get("/movies")
 def get_movies(
         genre: str | None = Query(None),
         actor: str | None = Query(None),
@@ -27,9 +39,6 @@ def get_movies(
 ):
     with UnitOfWork() as uow:
         films = uow.films.get_filtered(page, genre, actor, year)
-
-        uow.films.log_query(genre, actor, year)
-
         return films
 
 
@@ -37,6 +46,7 @@ def get_movies(
 def get_popular_queries(limit: int = 10):
     with UnitOfWork() as uow:
         return uow.films.get_top_queries(limit)
+
 
 if __name__ == "__main__":
     run(

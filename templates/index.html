@@ -1,147 +1,39 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Finder</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .movies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .movie-card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 10px;
-        }
-        button {
-            padding: 8px 16px;
-            cursor: pointer;
-        }
-        input, select {
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-    </style>
+    <title>Film Search</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Movie Finder</h1>
+    <div class="container">
+        <header>
+            <h1>Film Search</h1>
+            <div class="search-form">
+                <input type="text" id="genre" placeholder="Жанр">
+                <input type="text" id="actor" placeholder="Актер">
+                <input type="number" id="year" placeholder="Год">
+                <button onclick="search()">Поиск</button>
+            </div>
+        </header>
 
-    <div class="filters">
-        <h2>Фильтры</h2>
-        <div>
-            <label>Жанр:</label>
-            <input type="text" id="genre" placeholder="Драма, Комедия...">
+        <div class="main-content">
+            <div class="popular-queries">
+                <h2>Популярные запросы</h2>
+                <div id="queries"></div>
+            </div>
+
+            <main>
+                <div class="movies-grid" id="movies"></div>
+
+                <div class="pagination">
+                    <button id="prev">← Назад</button>
+                    <span class="current-page" id="page">1</span>
+                    <button id="next">Вперед →</button>
+                </div>
+            </main>
         </div>
-        <div>
-            <label>Актер:</label>
-            <input type="text" id="actor" placeholder="Том Хэнкс...">
-        </div>
-        <div>
-            <label>Год:</label>
-            <input type="number" id="year" placeholder="1994...">
-        </div>
-        <button onclick="loadMovies()">Поиск</button>
     </div>
-
-    <div id="loading" style="display: none;">Загрузка...</div>
-    <div id="error" style="color: red; display: none;"></div>
-
-    <div class="movies-grid" id="movies-container">
-        <!-- Фильмы будут здесь -->
-    </div>
-
-    <div class="pagination">
-        <button id="prev-page" onclick="changePage(-1)">Назад</button>
-        <span id="current-page">1</span>
-        <button id="next-page" onclick="changePage(1)">Вперед</button>
-    </div>
-
-    <script>
-        let currentPage = 1;
-
-        async function loadMovies() {
-            const genre = document.getElementById('genre').value;
-            const actor = document.getElementById('actor').value;
-            const year = document.getElementById('year').value;
-
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
-
-            try {
-                const params = new URLSearchParams();
-                if (genre) params.append('genre', genre);
-                if (actor) params.append('actor', actor);
-                if (year) params.append('year', year);
-                params.append('page', currentPage);
-
-                const response = await fetch(`/movies?${params.toString()}`);
-                if (!response.ok) throw new Error('Ошибка загрузки');
-
-                const movies = await response.json();
-                displayMovies(movies);
-            } catch (error) {
-                document.getElementById('error').textContent = error.message;
-                document.getElementById('error').style.display = 'block';
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-        function displayMovies(movies) {
-            const container = document.getElementById('movies-container');
-            container.innerHTML = '';
-
-            if (movies.length === 0) {
-                container.innerHTML = '<p>Фильмы не найдены</p>';
-                return;
-            }
-
-            movies.forEach(movie => {
-                const card = document.createElement('div');
-                card.className = 'movie-card';
-                card.innerHTML = `
-                    <h3>${movie.title}</h3>
-                    <p><strong>Год:</strong> ${movie.release_year}</p>
-                    <p>${movie.description}</p>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function changePage(delta) {
-            currentPage += delta;
-            if (currentPage < 1) currentPage = 1;
-            document.getElementById('current-page').textContent = currentPage;
-            loadMovies();
-        }
-
-        // Загружаем фильмы при загрузке страницы
-        window.onload = loadMovies;
-    </script>
+    <script src="/static/script.js"></script>
 </body>
 </html>

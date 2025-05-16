@@ -37,18 +37,40 @@ class FilmRepository:
         return self.cursor.fetchall()
 
     def _is_query_in_db(self, genre, actor, year):
-        self.cursor.execute('''SELECT query_id FROM log_query 
-        WHERE genre = %s AND actor = %s AND year = %s''', (genre, actor, year))
+        query = 'SELECT query_id FROM log_query WHERE '
+        conditions = []
+        values = []
+
+        if genre is None:
+            conditions.append('genre IS NULL')
+        else:
+            conditions.append('genre = %s')
+            values.append(genre)
+
+        if actor is None:
+            conditions.append('actor IS NULL')
+        else:
+            conditions.append('actor = %s')
+            values.append(actor)
+
+        if year is None:
+            conditions.append('year IS NULL')
+        else:
+            conditions.append('year = %s')
+            values.append(year)
+
+        query += ' AND '.join(conditions)
+        self.cursor.execute(query, values)
         return self.cursor.fetchone()
 
     def log_query(self, genre, actor, year):
         if genre is None and actor is None and year is None:
             return
 
-        query_id = self._is_query_in_db(genre, actor, year)
-        if query_id:
+        query = self._is_query_in_db(genre, actor, year)
+        if query:
             self.cursor.execute('''UPDATE log_query SET count = count + 1
-            WHERE query_id = %s''', (query_id[0],))
+            WHERE query_id = %s''', (query['query_id'],))
         else:
             self.cursor.execute('''INSERT INTO log_query (genre, actor, year, count) 
             VALUES (%s, %s, %s, 1)''', (genre, actor, year,))
