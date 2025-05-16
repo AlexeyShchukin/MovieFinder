@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from models import LogQueryRequest
+from schemas import LogQueryRequest
 from unit_of_work import UnitOfWork
 
 app = FastAPI()
