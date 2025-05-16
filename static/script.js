@@ -30,7 +30,7 @@ async function search() {
         await loadQueries();
     } catch (error) {
         console.error("Search error:", error);
-        alert("Произошла ошибка при поиске");
+        alert("An error occurred while searching");
     }
 }
 
@@ -52,7 +52,7 @@ async function loadMovies() {
     } catch (error) {
         console.error("Load movies error:", error);
         document.getElementById('movies').innerHTML = `
-            <div class="error-message">Ошибка загрузки фильмов</div>
+            <div class="error-message">Error loading movies</div>
         `;
     }
 }
@@ -75,8 +75,8 @@ function renderMovies(movies) {
         grid.innerHTML += `
             <div class="movie-card">
                 <h3>${movie.title}</h3>
-                <p>Год: ${movie.release_year}</p>
-                <p>${movie.description || 'Описание отсутствует'}</p>
+                <p>Year: ${movie.release_year}</p>
+                <p>${movie.description || 'Description is missing'}</p>
             </div>
         `;
     });
@@ -88,9 +88,9 @@ function renderQueries(queries) {
 
     queries.forEach(query => {
         let text = [];
-        if (query.genre) text.push(`Жанр: ${query.genre}`);
-        if (query.actor) text.push(`Актер: ${query.actor}`);
-        if (query.year) text.push(`Год: ${query.year}`);
+        if (query.genre) text.push(`Genre: ${query.genre}`);
+        if (query.actor) text.push(`Actor: ${query.actor}`);
+        if (query.year) text.push(`Year: ${query.year}`);
 
         container.innerHTML += `
             <div class="query-item" onclick="applyQuery('${query.genre || ''}', '${query.actor || ''}', '${query.year || ''}')">
