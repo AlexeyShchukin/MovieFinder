@@ -22,19 +22,20 @@ async def read_index(request: Request):
 @app.post("/log_query")
 async def log_query(data: LogQueryRequest):
     with UnitOfWork() as uow:
-        uow.films.log_query(data.genre, data.actor, data.year)
+        uow.films.log_query(data.title, data.genre, data.actor, data.year)
         return {"status": "logged"}
 
 
 @app.get("/movies")
 def get_movies(
+        title: str | None = Query(None),
         genre: str | None = Query(None),
         actor: str | None = Query(None),
         year: int | None = Query(None),
         page: int = Query(1, ge=1)
 ):
     with UnitOfWork() as uow:
-        films = uow.films.get_filtered(page, genre, actor, year)
+        films = uow.films.get_filtered(page, title, genre, actor, year)
         return films
 
 

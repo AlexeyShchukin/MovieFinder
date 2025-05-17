@@ -1,21 +1,23 @@
 let currentPage = 1;
+let currentTitle = '';
 let currentGenre = '';
 let currentActor = '';
 let currentYear = '';
 
 async function search() {
     currentPage = 1;
+    currentTitle = document.getElementById('title').value.trim();
     currentGenre = document.getElementById('genre').value.trim();
     currentActor = document.getElementById('actor').value.trim();
     currentYear = document.getElementById('year').value.trim();
 
     try {
-        // Логируем запрос (POST)
-        if (currentGenre || currentActor || currentYear) {
+        if (currentTitle || currentGenre || currentActor || currentYear) {
             await fetch('/log_query', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
+                    title: currentTitle || null,
                     genre: currentGenre || null,
                     actor: currentActor || null,
                     year: currentYear || null
@@ -23,10 +25,7 @@ async function search() {
             });
         }
 
-        // Загружаем фильмы (GET)
         await loadMovies();
-
-        // Обновляем популярные запросы (GET)
         await loadQueries();
     } catch (error) {
         console.error("Search error:", error);
@@ -37,6 +36,7 @@ async function search() {
 async function loadMovies() {
     try {
         const params = new URLSearchParams();
+        if (currentTitle) params.append('title', currentTitle);
         if (currentGenre) params.append('genre', currentGenre);
         if (currentActor) params.append('actor', currentActor);
         if (currentYear) params.append('year', currentYear);
@@ -88,19 +88,26 @@ function renderQueries(queries) {
 
     queries.forEach(query => {
         let text = [];
+        if (query.title) text.push(`Title: ${query.title}`);
         if (query.genre) text.push(`Genre: ${query.genre}`);
         if (query.actor) text.push(`Actor: ${query.actor}`);
         if (query.year) text.push(`Year: ${query.year}`);
 
         container.innerHTML += `
-            <div class="query-item" onclick="applyQuery('${query.genre || ''}', '${query.actor || ''}', '${query.year || ''}')">
+            <div class="query-item" onclick="applyQuery(
+                '${query.title || ''}',
+                '${query.genre || ''}',
+                '${query.actor || ''}',
+                '${query.year || ''}'
+                )">
                 ${text.join(' · ')}
             </div>
         `;
     });
 }
 
-function applyQuery(genre, actor, year) {
+function applyQuery(title, genre, actor, year) {
+    document.getElementById('title').value = title;
     document.getElementById('genre').value = genre;
     document.getElementById('actor').value = actor;
     document.getElementById('year').value = year;

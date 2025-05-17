@@ -2,11 +2,15 @@ class FilmRepository:
     def __init__(self, cursor):
         self.cursor = cursor
 
-    def get_filtered(self, page, genre, actor, year):
+    def get_filtered(self, page, title, genre, actor, year):
         query = 'SELECT f.title, f.release_year, f.description FROM film f'
         joins = []
         conditions = []
         params = []
+
+        if title:
+            conditions.append('f.title LIKE %s')
+            params.append(f'%{title}%')
 
         if genre:
             joins.append('JOIN film_category fc ON f.film_id = fc.film_id')
@@ -36,10 +40,16 @@ class FilmRepository:
         self.cursor.execute(query, params)
         return self.cursor.fetchall()
 
-    def _is_query_in_db(self, genre, actor, year):
+    def _is_query_in_db(self, title, genre, actor, year):
         query = 'SELECT query_id FROM log_query WHERE '
         conditions = []
         values = []
+
+        if title is None:
+            conditions.append('title IS NULL')
+        else:
+            conditions.append('title = %s')
+            values.append(title)
 
         if genre is None:
             conditions.append('genre IS NULL')
@@ -63,18 +73,19 @@ class FilmRepository:
         self.cursor.execute(query, values)
         return self.cursor.fetchone()
 
-    def log_query(self, genre, actor, year):
-        if genre is None and actor is None and year is None:
+    def log_query(self, title, genre, actor, year):
+        if title is None and genre is None and actor is None and year is None:
             return
 
-        query = self._is_query_in_db(genre, actor, year)
+        query = self._is_query_in_db(title, genre, actor, year)
         if query:
             self.cursor.execute('''UPDATE log_query SET count = count + 1
             WHERE query_id = %s''', (query['query_id'],))
         else:
-            self.cursor.execute('''INSERT INTO log_query (genre, actor, year, count) 
-            VALUES (%s, %s, %s, 1)''', (genre, actor, year,))
+            self.cursor.execute('''INSERT INTO log_query (title, genre, actor, year, count) 
+            VALUES (%s, %s, %s, %s, 1)''', (title, genre, actor, year))
 
     def get_top_queries(self, limit):
-        self.cursor.execute('SELECT genre, actor, year FROM log_query ORDER BY count DESC LIMIT %s', (limit,))
+        self.cursor.execute('''SELECT title, genre, actor, year FROM log_query 
+        ORDER BY count DESC LIMIT %s''', (limit,))
         return self.cursor.fetchall()
