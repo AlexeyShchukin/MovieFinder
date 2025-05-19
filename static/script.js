@@ -15,8 +15,8 @@ function setupAutocomplete() {
 
     // Закрываем выпадающие списки при клике вне их
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.autocomplete-wrapper')) {
-            closeAllDropdowns();
+        if (!e.target.closest('.autocomplete-wrapper') && !e.target.closest('.autocomplete-dropdown')) {
+        closeAllDropdowns();
         }
     });
 }
@@ -39,14 +39,18 @@ function setupInputAutocomplete(input, field, dropdownId, showOnEmpty = false) {
     });
 
     input.addEventListener('focus', () => {
+        closeAllDropdowns(dropdown); // Закрываем все, кроме текущего
         const query = input.value.trim();
         if ((query.length > 0 || (showOnEmpty && field === 'genre')) && !dropdown.innerHTML) {
             fetchAutocomplete(field, query, dropdown);
+        } else if (dropdown.innerHTML) {
+            dropdown.style.display = 'block';
         }
     });
 
-    // При клике на поле ввода показываем список, если есть данные
-    input.addEventListener('click', () => {
+    input.addEventListener('click', (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие, чтобы не сработал document.click
+        closeAllDropdowns(dropdown); // Закрываем все, кроме текущего
         if (dropdown.innerHTML) {
             dropdown.style.display = 'block';
         }
@@ -76,12 +80,12 @@ function selectAutocompleteItem(element, field) {
     const input = document.getElementById(field);
     input.value = element.textContent;
     closeAllDropdowns();
-    // Можно автоматически запускать поиск после выбора
-    // search();
+    search();
 }
 
-function closeAllDropdowns() {
+function closeAllDropdowns(except = null) {
     document.querySelectorAll('.autocomplete-dropdown').forEach(dropdown => {
+        if (except && dropdown === except) return;
         dropdown.style.display = 'none';
     });
 }
