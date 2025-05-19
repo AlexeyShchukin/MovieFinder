@@ -89,3 +89,33 @@ class FilmRepository:
         self.cursor.execute('''SELECT title, genre, actor, year FROM log_query 
         ORDER BY count DESC LIMIT %s''', (limit,))
         return self.cursor.fetchall()
+
+    def autocomplete(self, field, query):
+        if field == "title":
+            self.cursor.execute(
+                '''SELECT DISTINCT title FROM film 
+                WHERE title LIKE %s LIMIT 10''',
+                (f'{query}%',)
+            )
+        elif field == 'actor':
+            self.cursor.execute('''
+                    SELECT DISTINCT CONCAT(a.first_name, ' ', a.last_name) as name
+                    FROM actor a
+                    WHERE a.first_name LIKE %s OR a.last_name LIKE %s
+                    LIMIT 10
+                ''', (f'{query}%', f'{query}%'))
+        elif field == 'genre':
+            if not query:
+                self.cursor.execute('''
+                        SELECT name FROM category 
+                        ORDER BY name
+                        LIMIT 20
+                    ''')
+            else:
+                self.cursor.execute('''
+                        SELECT name FROM category 
+                        WHERE name LIKE %s 
+                        ORDER BY name
+                        LIMIT 10
+                    ''', (f'{query}%',))
+        return [row[list(row.keys())[0]].title() for row in self.cursor.fetchall()]

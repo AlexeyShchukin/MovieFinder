@@ -10,9 +10,18 @@
         <header>
             <h1>Film Search</h1>
             <div class="search-form">
-                <input type="text" id="title" placeholder="Title">
-                <input type="text" id="genre" placeholder="Genre">
-                <input type="text" id="actor" placeholder="Actor">
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="title" placeholder="Title" autocomplete="off">
+                    <div class="autocomplete-dropdown" id="title-dropdown"></div>
+                </div>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="genre" placeholder="Genre" autocomplete="off">
+                    <div class="autocomplete-dropdown" id="genre-dropdown"></div>
+                </div>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="actor" placeholder="Actor" autocomplete="off">
+                    <div class="autocomplete-dropdown" id="actor-dropdown"></div>
+                </div>
                 <input type="number" id="year" placeholder="Year">
                 <button onclick="search()">Search</button>
             </div>
