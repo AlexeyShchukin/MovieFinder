@@ -6,10 +6,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
+from middleware import logging_middleware
 from schemas import LogQueryRequest, FieldEnum
 from unit_of_work import UnitOfWork
 
 app = FastAPI()
+
+app.middleware("http")(logging_middleware)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
