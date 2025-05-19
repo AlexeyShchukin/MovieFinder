@@ -1,10 +1,12 @@
-from fastapi import FastAPI, Query, Request
+from typing import Any, Annotated
+
+from fastapi import FastAPI, Query, Request, Depends
 from uvicorn import run
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from schemas import LogQueryRequest
+from schemas import LogQueryRequest, FieldEnum
 from unit_of_work import UnitOfWork
 
 app = FastAPI()
@@ -20,28 +22,45 @@ async def read_index(request: Request):
 
 
 @app.post("/log_query")
-async def log_query(data: LogQueryRequest):
-    with UnitOfWork() as uow:
+async def log_query(
+        data: LogQueryRequest,
+        uow: Annotated[UnitOfWork, Depends(UnitOfWork)]
+):
+    with uow:
         uow.films.log_query(data.title, data.genre, data.actor, data.year)
         return {"status": "logged"}
 
 
 @app.get("/movies")
 def get_movies(
-        title: str | None = Query(None),
-        genre: str | None = Query(None),
-        actor: str | None = Query(None),
-        year: int | None = Query(None),
-        page: int = Query(1, ge=1)
-):
-    with UnitOfWork() as uow:
+        uow: Annotated[UnitOfWork, Depends(UnitOfWork)],
+        title: Annotated[str | None, Query()] = None,
+        genre: Annotated[str | None, Query()] = None,
+        actor: Annotated[str | None, Query()] = None,
+        year: Annotated[int | None, Query()] = None,
+        page: Annotated[int, Query(ge=1)] = 1
+) -> list[dict[str, Any]]:
+    with uow:
         films = uow.films.get_filtered(page, title, genre, actor, year)
         return films
 
 
+@app.get("/autocomplete")
+def autocomplete(
+        uow: Annotated[UnitOfWork, Depends(UnitOfWork)],
+        field: Annotated[FieldEnum, Query(...)],
+        query: Annotated[str, Query()] = ''
+):
+    with uow:
+        return uow.films.autocomplete(field, query)
+
+
 @app.get("/popular_queries")
-def get_popular_queries(limit: int = 10):
-    with UnitOfWork() as uow:
+def get_popular_queries(
+        uow: Annotated[UnitOfWork, Depends(UnitOfWork)],
+        limit: int = 10
+) -> list[dict[str, Any]]:
+    with uow:
         return uow.films.get_top_queries(limit)
 
 

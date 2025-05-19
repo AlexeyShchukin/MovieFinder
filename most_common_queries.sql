@@ -7,3 +7,7 @@ CREATE TABLE IF NOT EXISTS log_query(
     count INT
 );
 
+CREATE INDEX idx_category_name ON category(name);
+
+SHOW INDEX FROM category;
+

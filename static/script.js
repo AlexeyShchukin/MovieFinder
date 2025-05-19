@@ -4,6 +4,88 @@ let currentGenre = '';
 let currentActor = '';
 let currentYear = '';
 
+function setupAutocomplete() {
+    const titleInput = document.getElementById('title');
+    const genreInput = document.getElementById('genre');
+    const actorInput = document.getElementById('actor');
+
+    setupInputAutocomplete(titleInput, 'title', 'title-dropdown');
+    setupInputAutocomplete(genreInput, 'genre', 'genre-dropdown', true);
+    setupInputAutocomplete(actorInput, 'actor', 'actor-dropdown');
+
+    // Закрываем выпадающие списки при клике вне их
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.autocomplete-wrapper')) {
+            closeAllDropdowns();
+        }
+    });
+}
+
+function setupInputAutocomplete(input, field, dropdownId, showOnEmpty = false) {
+    const dropdown = document.getElementById(dropdownId);
+    let timeoutId;
+
+    input.addEventListener('input', () => {
+        clearTimeout(timeoutId);
+        const query = input.value.trim();
+
+        if (query.length > 0 || (showOnEmpty && field === 'genre')) {
+            timeoutId = setTimeout(() => {
+                fetchAutocomplete(field, query, dropdown);
+            }, 300);
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    input.addEventListener('focus', () => {
+        const query = input.value.trim();
+        if ((query.length > 0 || (showOnEmpty && field === 'genre')) && !dropdown.innerHTML) {
+            fetchAutocomplete(field, query, dropdown);
+        }
+    });
+
+    // При клике на поле ввода показываем список, если есть данные
+    input.addEventListener('click', () => {
+        if (dropdown.innerHTML) {
+            dropdown.style.display = 'block';
+        }
+    });
+}
+
+async function fetchAutocomplete(field, query, dropdown) {
+    try {
+        const response = await fetch(`/autocomplete?field=${field}&query=${encodeURIComponent(query)}`);
+        const items = await response.json();
+
+        if (items.length > 0) {
+            dropdown.innerHTML = items.map(item =>
+                `<div onclick="selectAutocompleteItem(this, '${field}')">${item}</div>`
+            ).join('');
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Autocomplete error:', error);
+        dropdown.style.display = 'none';
+    }
+}
+
+function selectAutocompleteItem(element, field) {
+    const input = document.getElementById(field);
+    input.value = element.textContent;
+    closeAllDropdowns();
+    // Можно автоматически запускать поиск после выбора
+    // search();
+}
+
+function closeAllDropdowns() {
+    document.querySelectorAll('.autocomplete-dropdown').forEach(dropdown => {
+        dropdown.style.display = 'none';
+    });
+}
+
 async function search() {
     currentPage = 1;
     currentTitle = document.getElementById('title').value.trim();
@@ -122,6 +204,8 @@ function updatePagination(resultsCount) {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
+    setupAutocomplete();
+
     document.getElementById('prev').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
@@ -134,14 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
         loadMovies();
     });
 
-    // Обработка Enter
     document.querySelectorAll('input').forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') search();
         });
     });
 
-    // Первая загрузка
     loadMovies();
     loadQueries();
 });

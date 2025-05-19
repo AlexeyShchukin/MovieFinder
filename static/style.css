@@ -207,3 +207,44 @@ main {
 .query-item:last-child {
     margin-bottom: 0;
 }
+
+/* Добавим в конец файла */
+
+.autocomplete-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 150px;
+}
+
+.autocomplete-wrapper:first-child {
+    min-width: 200px;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: rgba(40, 40, 50, 0.95);
+    border-radius: 0 0 5px 5px;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.autocomplete-dropdown div {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.autocomplete-dropdown div:hover {
+    background-color: rgba(60, 60, 70, 0.8);
+    color: #fff;
+}
+
+.search-form input {
+    width: 100%;
+}
