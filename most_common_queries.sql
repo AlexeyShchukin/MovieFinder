@@ -6,8 +6,3 @@ CREATE TABLE IF NOT EXISTS log_query(
     year INT,
     count INT
 );
-
-CREATE INDEX idx_category_name ON category(name);
-
-SHOW INDEX FROM category;
-
