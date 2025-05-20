@@ -18,7 +18,7 @@ def handle_db_error(request: Request, exc: DatabaseError) -> ORJSONResponse:
     )
 
 
-async def handle_mysql_error(request: Request, exc: Error) -> ORJSONResponse:
+def handle_mysql_error(request: Request, exc: Error) -> ORJSONResponse:
     logger.error(
         "MySQL error: %s %s",
         request.method,
@@ -31,7 +31,7 @@ async def handle_mysql_error(request: Request, exc: Error) -> ORJSONResponse:
     )
 
 
-async def handle_unexpected_error(request: Request, exc: Exception) -> ORJSONResponse:
+def handle_unexpected_error(request: Request, exc: Exception) -> ORJSONResponse:
     logger.error(
         "Unexpected error occurred",
         request.method,
