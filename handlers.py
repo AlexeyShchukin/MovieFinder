@@ -32,10 +32,12 @@ async def handle_mysql_error(request: Request, exc: Error) -> ORJSONResponse:
 
 
 async def handle_unexpected_error(request: Request, exc: Exception) -> ORJSONResponse:
-    logger.error("Unexpected error occurred",
-                 request.method,
-                 request.url,
-                 exc_info=exc)
+    logger.error(
+        "Unexpected error occurred",
+        request.method,
+        request.url,
+        exc_info=exc
+    )
     return ORJSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"message": "Internal server error. Please try again later."}
