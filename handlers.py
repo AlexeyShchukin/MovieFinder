@@ -24,7 +24,7 @@ def handle_mysql_error(request: Request, exc: Error) -> ORJSONResponse:
 
 def handle_unexpected_error(request: Request, exc: Exception) -> ORJSONResponse:
     logger.error(
-        "Unexpected error occurred",
+        "Unexpected error occurred during request %s %s: %s",
         request.method,
         request.url,
         str(exc),
