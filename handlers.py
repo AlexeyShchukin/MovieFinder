@@ -5,29 +5,20 @@ from mysql.connector.errors import DatabaseError, Error
 from middleware import logger
 
 
-def handle_db_error(request: Request, exc: DatabaseError) -> ORJSONResponse:
-    logger.error(
-        "Database error during request: %s %s",
-        request.method,
-        request.url,
-        exc_info=exc
-    )
-    return ORJSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"message": "An unexpected error has occurred. Our admins are already working on it."}
-    )
-
-
 def handle_mysql_error(request: Request, exc: Error) -> ORJSONResponse:
     logger.error(
-        "MySQL error: %s %s",
+        "MySQL database error during request %s %s: %s",
         request.method,
         request.url,
+        str(exc),
         exc_info=exc
     )
     return ORJSONResponse(
         status_code=500,
-        content={"message": "A database error occurred. Please try again later."}
+        content={
+            "error": type(exc).__name__,
+            "message": "A database error occurred. Please try again later."
+        }
     )
 
 
@@ -36,9 +27,13 @@ def handle_unexpected_error(request: Request, exc: Exception) -> ORJSONResponse:
         "Unexpected error occurred",
         request.method,
         request.url,
+        str(exc),
         exc_info=exc
     )
     return ORJSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"message": "Internal server error. Please try again later."}
+        content={
+            "error": type(exc).__name__,
+            "message": "Internal server error. Please try again later."
+        }
     )

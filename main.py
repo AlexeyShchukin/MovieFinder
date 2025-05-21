@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from mysql.connector.errors import DatabaseError, Error
 
-from handlers import handle_db_error, handle_mysql_error, handle_unexpected_error
+from handlers import handle_mysql_error, handle_unexpected_error
 from middleware import logging_middleware
 from schemas import LogQueryRequest, FieldEnum
 from unit_of_work import UnitOfWork
@@ -15,7 +15,7 @@ from unit_of_work import UnitOfWork
 app = FastAPI()
 
 app.middleware("http")(logging_middleware)
-app.add_exception_handler(DatabaseError, handle_db_error)
+
 app.add_exception_handler(Error, handle_mysql_error)
 app.add_exception_handler(Exception, handle_unexpected_error)
 
