@@ -186,7 +186,8 @@ function renderQueries(queries) {
                 '${query.actor || ''}',
                 '${query.year || ''}'
                 )">
-                ${text.join(' · ')}
+                <span class="query-text">${text.join(' · ')}</span>
+                <span class="query-count">${query.count}</span>
             </div>
         `;
     });
