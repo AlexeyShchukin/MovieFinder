@@ -2,13 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Film Search</title>
+    <title>Movie Founder</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Film Search</h1>
+            <h1>Movie Founder <span class="help-icon">?</span></h1>
             <div class="search-form">
                 <div class="autocomplete-wrapper">
                     <input type="text" id="title" placeholder="Title" autocomplete="off">
@@ -26,7 +26,17 @@
                 <button onclick="search()">Search</button>
             </div>
         </header>
-
+        <section class="instructions hidden">
+            <h2>How to use Movie Founder</h2>
+            <p>Find your favorite movies quickly and easily!</p>
+            <ul>
+                <li>Type the movie title, genre, actor, or year of release in the appropriate fields.</li>
+                <li>Use autocomplete: start typing and suggestions will appear.</li>
+                <li>Click "Search" or press Enter to find movies.</li>
+                <li>Click popular searches on the left to repeat popular searches.</li>
+                <li>Use the "Back" and "Next" buttons to navigate through the results pages.</li>
+            </ul>
+        </section>
         <div class="main-content">
             <div class="popular-queries">
                 <h2>Popular queries</h2>
