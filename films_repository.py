@@ -86,7 +86,7 @@ class FilmRepository:
             VALUES (%s, %s, %s, %s, 1)''', (title, genre, actor, year))
 
     def get_top_queries(self, limit):
-        self.cursor.execute('''SELECT title, genre, actor, year FROM log_query 
+        self.cursor.execute('''SELECT title, genre, actor, year, count FROM log_query 
         ORDER BY count DESC LIMIT %s''', (limit,))
         return self.cursor.fetchall()
 

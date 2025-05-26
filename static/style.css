@@ -199,9 +199,15 @@ main {
 }
 
 .query-item {
-    /* ... предыдущие стили ... */
-    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(40, 40, 50, 0.8);
     padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .query-item:last-child {
@@ -247,4 +253,18 @@ main {
 
 .search-form input {
     width: 100%;
+}
+
+.query-text {
+    flex: 1;
+}
+
+.query-count {
+    background-color: #e0a800;
+    color: #1a1a1a;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
 }
