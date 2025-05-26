@@ -1,6 +1,6 @@
 from fastapi.responses import ORJSONResponse
 from fastapi import Request, status
-from mysql.connector.errors import DatabaseError, Error
+from mysql.connector.errors import Error
 
 from middleware import logger
 
