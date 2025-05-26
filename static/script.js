@@ -231,4 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadMovies();
     loadQueries();
+
+    // Переключение инструкции
+    document.querySelector('.help-icon').addEventListener('click', toggleInstructions);
 });
+
+function toggleInstructions() {
+    const instructions = document.querySelector('.instructions');
+    instructions.classList.toggle('hidden');
+}

@@ -268,3 +268,74 @@ main {
     font-weight: bold;
     line-height: 1;
 }
+
+.instructions {
+    background-color: rgba(25, 25, 35, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+}
+
+.instructions:not(.hidden) {
+    max-height: 500px; /* Достаточно для содержимого */
+    opacity: 1;
+}
+
+.instructions h2 {
+    color: #e0a800;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.instructions p {
+    color: #ccc;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.instructions ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.instructions li {
+    color: #ccc;
+    margin-bottom: 10px;
+    font-size: 14px;
+    position: relative;
+    padding-left: 20px;
+}
+
+.instructions li::before {
+    content: '•';
+    color: #e0a800;
+    position: absolute;
+    left: 0;
+    font-size: 18px;
+}
+
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: #e0a800;
+    color: #1a1a1a;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.help-icon:hover {
+    background-color: #f8c537;
+}
