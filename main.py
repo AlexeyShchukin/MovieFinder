@@ -5,7 +5,7 @@ from uvicorn import run
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from mysql.connector.errors import DatabaseError, Error
+from mysql.connector.errors import Error
 
 from handlers import handle_mysql_error, handle_unexpected_error
 from middleware import logging_middleware
