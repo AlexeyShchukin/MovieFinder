@@ -4,7 +4,7 @@ MovieFinder is a web application for discovering movies with built-in search ana
 
 ### User-Facing Features
 
-- Advanced Search by title, genre, actors, and release year
+- Advanced case-insensitive search by title, genre, actors, and release year
 
 
 - Smart Autocomplete with real-time suggestions (title, genres, actors) 
